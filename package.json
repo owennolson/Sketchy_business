@@ -1,0 +1,27 @@
+{
+  "name": "sketchy_business",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server --ignore client",
+    "develop": "concurrently \"cd server && npm run start\" \"cd client && npm start\"",
+    "install": "cd server && npm i && cd ../client && npm i",
+    "seed": "cd server && npm run seed",
+    "build": "cd client && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owennolson/Sketchy_business.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/owennolson/Sketchy_business/issues"
+  },
+  "homepage": "https://github.com/owennolson/Sketchy_business#readme",
+  "devDependencies": {
+    "concurrently": "^8.1.0"
+  }
+}
