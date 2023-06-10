@@ -1,50 +1,86 @@
-import React from "react";
+import React, { useState } from "react";
 import { useStoreContext } from '../utils/GlobalState';
+import { useMutation } from '@apollo/client';
+import { ADD_PRODUCT } from '../utils/mutations';
 
 function SellArt() {
+    const [formState, setFormState] = useState({name: '', 
+    image: '', 
+    artist: '',
+    price: '',
+    quantity: '',
+    description: '',
+    category: ''});
+    const [addProduct] = useMutation(ADD_PRODUCT);
     const [state, dispatch] = useStoreContext();
 
     const { categories } = state;
+    console.log(categories);
+
+    const handleFormSubmit = async (event) => {
+        event.preventDefault();
+        console.log('formState', formState);
+        await addProduct({
+          variables: {
+            name: formState.name,
+            image: formState.image,
+            artist: formState.artist,
+            price: parseFloat(formState.price),
+            quantity: parseInt(formState.quantity),
+            description: formState.description,
+            category: formState.categoryId
+          },
+        });
+
+      };
+
+      const handleChange = (event) => {
+        const { name, value } = event.target;
+        setFormState({
+          ...formState,
+          [name]: value,
+        });
+      };
 
   return (
     <>
       <div>
         <h3>What would you like to sell?</h3>
-        <form>
+        <form onSubmit={handleFormSubmit}>
           {/* {" "} */}
           <div class="form-group">
             <label for="name" class="h4">
               Title of Artwork:
             </label>
-            <input class="rounded" type="text" id="name" />
+            <input class="rounded" type="text" name="name" id="name" onChange={handleChange} />
           </div>
 
           <div class="form-group">
             <label for="image" class="h4">
               Image URL:
             </label>
-            <input class="rounded" type="text" id="image" />
+            <input class="rounded" type="text" name="image" id="image" onChange={handleChange} />
           </div>
 
           <div class="form-group">
             <label for="artist" class="h4">
               Artist's Name:
             </label>
-            <input class="rounded" type="text" id="artist" />
+            <input class="rounded" type="text" name="artist" id="artist" onChange={handleChange} />
           </div>
 
           <div class="form-group">
             <label for="price" class="h4">
               Price:
             </label>
-            <input class="rounded" type="text" id="price" />
+            <input class="rounded" type="text" name="price" id="price" onChange={handleChange} />
           </div>
 
           <div class="form-group">
             <label for="quantity" class="h4">
               Quantity:
             </label>
-            <input class="rounded" type="text" id="quantity" />
+            <input class="rounded" type="text" name="quantity" id="quantity" onChange={handleChange} />
           </div>
 
           <div class="form-group">
@@ -64,14 +100,15 @@ function SellArt() {
                   name="description"
                   rows="3"
                   cols="60"
+                  onChange={handleChange}
                 ></textarea>
               </div>
             </div>
             <div>
             <label for="category">Select Category</label>
-                <select id="category" name="category">
+                <select id="category" name="category" onChange={handleChange}>
                     {categories.map((category) => (
-                    <option key={category._id} value={category._id}>
+                    <option key={category._id} name="categoryId" value={category._id} onChange={handleChange}>
                         {category.name}
                     </option>
                     ))}
@@ -79,6 +116,9 @@ function SellArt() {
             </div>
 
           </div>
+          <div className="flex-row flex-end">
+          <button type="submit">Submit</button>
+        </div>
         </form>
       </div>
     </>
