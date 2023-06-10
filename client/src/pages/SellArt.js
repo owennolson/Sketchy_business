@@ -15,7 +15,6 @@ function SellArt() {
     const [state, dispatch] = useStoreContext();
 
     const { categories } = state;
-    console.log(categories);
 
     const handleFormSubmit = async (event) => {
         event.preventDefault();
@@ -28,18 +27,30 @@ function SellArt() {
             price: parseFloat(formState.price),
             quantity: parseInt(formState.quantity),
             description: formState.description,
-            category: formState.categoryId
+            category: formState.category
           },
         });
 
       };
 
       const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormState({
-          ...formState,
-          [name]: value,
-        });
+        const {name, value} = event.target;
+        if (name === 'category') {
+            const selectedCategory = categories.find(
+              (category) => category._id === value
+            );
+            setFormState((prevState) => ({
+              ...prevState,
+              category: selectedCategory ? selectedCategory._id : '',
+            }));
+          } else {
+            const { name, value } = event.target;
+            setFormState({
+              ...formState,
+              [name]: value,
+            });
+          }
+
       };
 
   return (
@@ -107,8 +118,9 @@ function SellArt() {
             <div>
             <label for="category">Select Category</label>
                 <select id="category" name="category" onChange={handleChange}>
+                <option value="">Select Category</option>
                     {categories.map((category) => (
-                    <option key={category._id} name="categoryId" value={category._id} onChange={handleChange}>
+                    <option key={category._id} value={category._id}>
                         {category.name}
                     </option>
                     ))}
