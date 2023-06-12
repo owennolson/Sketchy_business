@@ -1,9 +1,9 @@
 :root {
-  --primary: #232F3E;
-  --secondary: #F3A847;
-  --tertiary: #B12704;
+  --primary: #18242D;
+  --secondary: #1D9BF0;
+  --tertiary: #a0c8f0;
   --light: #fafafa;
-  --dark: #272f32;
+  --dark: #15202B;
   --error: rgb(228, 46, 1);
   --spacing-one: calc(1rem * 0.5);
   --spacing-two: calc(1rem);
@@ -21,11 +21,14 @@ body {
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Karla', sans-serif;
+font-family: 'Roboto Mono', monospace;
   font-weight: 400;
   line-height: 1.5;
   font-size: 16px;
-  color: var(--dark);
+  color: var(--light);
+
+background: rgb(0,0,0);
+background: linear-gradient(335deg, rgba(0,0,0,1) 0%, rgba(8,36,61,1) 61%);
 }
 
 h1,
@@ -34,7 +37,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Rubik', sans-serif;
+font-family: 'Roboto Mono', monospace;
   font-weight: 500;
   margin: 5px 0;
   line-height: 1.25;
@@ -80,7 +83,7 @@ a:hover {
 }
 
 header {
-  background: var(--primary);
+backdrop-filter: blur(100px);
 }
 
 header a {
@@ -91,12 +94,13 @@ button {
   font-size: 1rem;
   text-decoration: none;
   padding: 0.25rem 1rem;
-  border-radius: .5rem;
+  border-radius: 2rem;
   border: none;
   outline: none;
   cursor: pointer;
   margin: 0 1px;
-  background-color: var(--secondary);
+  color: var(--light);
+  background-color: var(--primary);
 }
 
 button:hover {
