@@ -65,6 +65,15 @@ const typeDefs = gql`
     ): User
     updateProduct(_id: ID!, quantity: Int!): Product
     login(email: String!, password: String!): Auth
+    addProduct(
+      name: String!
+      artist: String
+      description: String
+      image: String
+      quantity: Int
+      price: Float!
+      category: ID!
+    ): Product
   }
 `;
 

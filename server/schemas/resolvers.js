@@ -145,6 +145,12 @@ const resolvers = {
 
       return { token, user };
     },
+    addProduct: async (parent, args) => {
+
+      const product = await Product.create(args);
+
+      return { product };
+    },
   },
 };
 
