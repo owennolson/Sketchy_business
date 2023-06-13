@@ -86,10 +86,10 @@ function Detail() {
         <div className="container my-1">
           <Link to="/">← Back to Art</Link>
 
-          <h2>{currentProduct.name}</h2>
+          <h2>Title: {currentProduct.name}</h2>
 
-          <p>{currentProduct.description}</p>
-
+          <p>Description: {currentProduct.description}</p>
+<p>Artist: {currentProduct.artist}</p>
           <p>
             <strong>Price:</strong>${currentProduct.price}{' '}
             <button onClick={addToCart}>Add to Cart</button>
