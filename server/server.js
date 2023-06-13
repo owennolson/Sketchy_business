@@ -14,6 +14,8 @@ const server = new ApolloServer({
   context: authMiddleware,
 });
 
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/sketchy_business');
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
