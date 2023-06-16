@@ -59,7 +59,7 @@ function App() {
                 element={<Signup />} 
               />
               <Route 
-                path="/success" 
+                path="/success*" 
                 element={<Success />} 
               />
               <Route 
