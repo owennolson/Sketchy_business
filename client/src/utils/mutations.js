@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const LOGIN = gql`
   mutation login($email: String!, $password: String!) {
@@ -69,7 +69,16 @@ export const ADD_PRODUCT = gql`
       price: $price
       category: $category
     ) {
-       _id
+      _id
+    }
+  }
+`;
+
+export const UPDATE_INV = gql`
+  mutation updateProduct($_id: ID!, $quantity: Int!) {
+    updateProduct(_id: $_id, quantity: $quantity) {
+      _id
+      quantity
     }
   }
 `;
