@@ -53,6 +53,7 @@ export const QUERY_CATEGORIES = gql`
 export const QUERY_USER = gql`
   {
     user {
+      _id
       firstName
       lastName
       orders {

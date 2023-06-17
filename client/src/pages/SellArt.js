@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useStoreContext } from '../utils/GlobalState';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { ADD_PRODUCT } from '../utils/mutations';
+import { QUERY_USER } from '../utils/queries';
 
 function SellArt() {
   const [formState, setFormState] = useState({
@@ -18,9 +19,12 @@ function SellArt() {
 
   const { categories } = state;
 
+  const { data } = useQuery(QUERY_USER);
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     console.log('formState', formState);
+    console.log("userData", data)
     await addProduct({
       variables: {
         name: formState.name,
@@ -29,7 +33,8 @@ function SellArt() {
         price: parseFloat(formState.price),
         quantity: parseInt(formState.quantity),
         description: formState.description,
-        category: formState.category
+        category: formState.category,
+        user: data.user._id
       },
     });
 
