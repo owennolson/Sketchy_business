@@ -34,6 +34,9 @@ export const QUERY_ALL_PRODUCTS = gql`
       description
       price
       quantity
+      user {
+        _id
+      }
       category {
         name
       }

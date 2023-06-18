@@ -3,6 +3,7 @@ import { useStoreContext } from '../utils/GlobalState';
 import { useMutation, useQuery } from '@apollo/client';
 import { ADD_PRODUCT } from '../utils/mutations';
 import { QUERY_USER } from '../utils/queries';
+import { QUERY_ALL_PRODUCTS } from '../utils/queries';
 
 function SellArt() {
   const [formState, setFormState] = useState({
@@ -19,12 +20,21 @@ function SellArt() {
 
   const { categories } = state;
 
-  const { data } = useQuery(QUERY_USER);
+
+const { data: userData, loading: userLoading } = useQuery(QUERY_USER);
+const { loading: productsLoading, data: userProductsData } = useQuery(QUERY_ALL_PRODUCTS);
+
+if (!userLoading && !productsLoading) {
+  const userProducts = userProductsData.products.filter(
+    (product) => product.user?._id === userData.user._id
+  );
+  console.log(userProducts);
+}
+
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    console.log('formState', formState);
-    console.log("userData", data)
+  
     await addProduct({
       variables: {
         name: formState.name,
@@ -34,7 +44,7 @@ function SellArt() {
         quantity: parseInt(formState.quantity),
         description: formState.description,
         category: formState.category,
-        user: data.user._id
+        user: userData.user._id
       },
     });
 
