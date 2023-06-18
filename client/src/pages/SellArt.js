@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { useStoreContext } from '../utils/GlobalState';
-import { useMutation } from '@apollo/client';
-import { ADD_PRODUCT } from '../utils/mutations';
+import { useStoreContext } from "../utils/GlobalState";
+import { useMutation } from "@apollo/client";
+import { ADD_PRODUCT } from "../utils/mutations";
 
 function SellArt() {
   const [formState, setFormState] = useState({
-    name: '',
-    image: '',
-    artist: '',
-    price: '',
-    quantity: '',
-    description: '',
-    category: ''
+    name: "",
+    image: "",
+    artist: "",
+    price: "",
+    quantity: "",
+    description: "",
+    category: "",
   });
   const [addProduct] = useMutation(ADD_PRODUCT);
   const [state, dispatch] = useStoreContext();
@@ -20,7 +20,7 @@ function SellArt() {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    console.log('formState', formState);
+    console.log("formState", formState);
     await addProduct({
       variables: {
         name: formState.name,
@@ -29,31 +29,35 @@ function SellArt() {
         price: parseFloat(formState.price),
         quantity: parseInt(formState.quantity),
         description: formState.description,
-        category: formState.category
+        category: formState.category,
       },
     });
 
     // Clear the form after submitting
     setFormState({
-      name: '',
-      image: '',
-      artist: '',
-      price: '',
-      quantity: '',
-      description: '',
-      category: ''
+      name: "",
+      image: "",
+      artist: "",
+      price: "",
+      quantity: "",
+      description: "",
+      category: "",
     });
+
+    setTimeout(() => {
+      window.location.assign("/");
+    }, 10);
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    if (name === 'category') {
+    if (name === "category") {
       const selectedCategory = categories.find(
         (category) => category._id === value
       );
       setFormState((prevState) => ({
         ...prevState,
-        category: selectedCategory ? selectedCategory._id : '',
+        category: selectedCategory ? selectedCategory._id : "",
       }));
     } else {
       setFormState((prevState) => ({
@@ -72,35 +76,70 @@ function SellArt() {
             <label for="name" class="h4">
               Title of Artwork:
             </label>
-            <input class="rounded" type="text" name="name" id="name" onChange={handleChange} value={formState.name} />
+            <input
+              class="rounded"
+              type="text"
+              name="name"
+              id="name"
+              onChange={handleChange}
+              value={formState.name}
+            />
           </div>
 
           <div class="form-group">
             <label for="image" class="h4">
               Image URL:
             </label>
-            <input class="rounded" type="text" name="image" id="image" onChange={handleChange} value={formState.image} />
+            <input
+              class="rounded"
+              type="text"
+              name="image"
+              id="image"
+              onChange={handleChange}
+              value={formState.image}
+            />
           </div>
 
           <div class="form-group">
             <label for="artist" class="h4">
               Artist's Name:
             </label>
-            <input class="rounded" type="text" name="artist" id="artist" onChange={handleChange} value={formState.artist} />
+            <input
+              class="rounded"
+              type="text"
+              name="artist"
+              id="artist"
+              onChange={handleChange}
+              value={formState.artist}
+            />
           </div>
 
           <div class="form-group">
             <label for="price" class="h4">
               Price:
             </label>
-            <input class="rounded" type="text" name="price" id="price" onChange={handleChange} value={formState.price} />
+            <input
+              class="rounded"
+              type="text"
+              name="price"
+              id="price"
+              onChange={handleChange}
+              value={formState.price}
+            />
           </div>
 
           <div class="form-group">
             <label for="quantity" class="h4">
               Quantity:
             </label>
-            <input class="rounded" type="text" name="quantity" id="quantity" onChange={handleChange} value={formState.quantity} />
+            <input
+              class="rounded"
+              type="text"
+              name="quantity"
+              id="quantity"
+              onChange={handleChange}
+              value={formState.quantity}
+            />
           </div>
 
           <div class="form-group">
@@ -127,7 +166,12 @@ function SellArt() {
             </div>
             <div>
               <label for="category">Select Category</label>
-              <select id="category" name="category" onChange={handleChange} value={formState.category}>
+              <select
+                id="category"
+                name="category"
+                onChange={handleChange}
+                value={formState.category}
+              >
                 <option value="">Select Category</option>
                 {categories.map((category) => (
                   <option key={category._id} value={category._id}>

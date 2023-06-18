@@ -15,7 +15,7 @@ function Success() {
       cart.forEach((item) => {
         console.log(item.quantity);
         const inventory = item.quantity - item.purchaseQuantity;
-        console.log(item.purchaseQuantity)
+        console.log(item.purchaseQuantity);
         console.log(inventory);
         updateProduct({
           variables: {
@@ -36,9 +36,9 @@ function Success() {
         });
       }
 
-      //      setTimeout(() => {
-      //        window.location.assign('/');
-      //      }, 3000);
+      setTimeout(() => {
+        window.location.assign("/");
+      }, 3000);
     }
 
     saveOrder();

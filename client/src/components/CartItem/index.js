@@ -16,6 +16,7 @@ const CartItem = ({ item }) => {
 
   const onChange = (e) => {
     const value = e.target.value;
+ //   if (value === "0" || value>item.quantity) {
     if (value === "0") {
       dispatch({
         type: REMOVE_FROM_CART,
@@ -64,3 +65,25 @@ const CartItem = ({ item }) => {
 };
 
 export default CartItem;
+
+
+/* const onChange = (e) => {
+    const value = e.target.value;
+    if (value === "0") {
+      dispatch({
+        type: REMOVE_FROM_CART,
+        _id: item._id,
+      });
+      idbPromise("cart", "delete", { ...item });
+    } else {
+      dispatch({
+        type: UPDATE_CART_QUANTITY,
+        _id: item._id,
+        purchaseQuantity: parseInt(value),
+      });
+      idbPromise("cart", "put", { ...item,  purchaseQuantity: parseInt(value), _id:  item._id
+});
+    }
+  };
+
+  */
