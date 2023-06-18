@@ -6,7 +6,7 @@ import { QUERY_USER } from '../utils/queries';
 import { QUERY_ALL_PRODUCTS } from '../utils/queries';
 
 function SellArt() {
-  const [products, setProducts] = useState([]);
+  const [userProducts, setUserProducts] = useState([]);
   const [formState, setFormState] = useState({
     name: '',
     image: '',
@@ -29,10 +29,10 @@ const { loading: productsLoading, data: userProductsData } = useQuery(QUERY_ALL_
 
 useEffect(() => {
   if (!userLoading && !productsLoading && userProductsData) {
-    const userProducts = userProductsData.products.filter(
+    const filteredUserProducts = userProductsData.products.filter(
       (product) => product?.user?._id === userData?.user._id
     );
-    setProducts(userProducts);
+    setUserProducts(filteredUserProducts);
   }
 }, [userLoading, productsLoading, userProductsData, userData]);
 
@@ -56,7 +56,7 @@ const handleFormSubmit = async (event) => {
   const addedProduct = data?.addProduct;
 
   if (addedProduct) {
-    setProducts((prevProducts) => [...prevProducts, addedProduct]);
+    setUserProducts((prevProducts) => [...prevProducts, addedProduct]);
   }
 
   setFormState({
@@ -95,7 +95,7 @@ const handleFormSubmit = async (event) => {
         update: (cache) => {
           cache.modify({
             fields: {
-              products(existingProducts = [], { readField }) {
+              userProducts(existingProducts = [], { readField }) {
                 const updatedProducts = existingProducts.filter(
                   (productRef) => productId !== readField('_id', productRef)
                 );
@@ -105,7 +105,7 @@ const handleFormSubmit = async (event) => {
           });
         },
       });
-      setProducts((prevProducts) =>
+      setUserProducts((prevProducts) =>
         prevProducts.filter((product) => product._id !== productId)
       );
     } catch (error) {
@@ -194,7 +194,7 @@ const handleFormSubmit = async (event) => {
       </div>
       <div>
         <h3>Your Listed Artwork:</h3>
-        {products.map((product) => (
+        {userProducts.map((product) => (
                   <div class="row mb-2">
                   <div class="col-md-8">
                     <h4>{product.name}</h4>
