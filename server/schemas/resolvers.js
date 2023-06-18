@@ -151,6 +151,11 @@ const resolvers = {
 
       return { product };
     },
+    deleteProduct: async (parent, args) => {
+      const product = await Product.findByIdAndDelete({_id: args.productId});
+
+      return { product };
+    },
   },
 };
 

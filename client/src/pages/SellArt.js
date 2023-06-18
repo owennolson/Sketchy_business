@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useStoreContext } from '../utils/GlobalState';
 import { useMutation, useQuery } from '@apollo/client';
-import { ADD_PRODUCT } from '../utils/mutations';
+import { ADD_PRODUCT, DELETE_PRODUCT } from '../utils/mutations';
 import { QUERY_USER } from '../utils/queries';
 import { QUERY_ALL_PRODUCTS } from '../utils/queries';
 
@@ -16,6 +16,7 @@ function SellArt() {
     category: ''
   });
   const [addProduct] = useMutation(ADD_PRODUCT);
+  const [deleteProduct] = useMutation(DELETE_PRODUCT);
   const [state, dispatch] = useStoreContext();
 
   const { categories } = state;
@@ -78,6 +79,19 @@ if (!userLoading && !productsLoading) {
       }));
     }
   };
+
+  const handleDelete = async (productId) => {
+    try {
+      await deleteProduct({
+        variables: {
+          productId: productId
+        },
+      });
+
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
+  }
 
   return (
     <>
@@ -166,7 +180,7 @@ if (!userLoading && !productsLoading) {
                     <h4>{product.name}</h4>
                   </div>
                   <div class="col-md-4">
-                    <button id="delete" class="btn btn-sm btn-danger" data-id={product._id}>REMOVE LISTING</button>
+                    <button id="delete" onClick={() => handleDelete(product._id)} class="btn btn-sm btn-danger" data-id={product._id}>REMOVE LISTING</button>
                   </div>
                 </div>
 

@@ -76,6 +76,7 @@ const typeDefs = gql`
       user: ID
       category: ID!
     ): Product
+    deleteProduct(productId: ID!): Product
   }
 `;
 
