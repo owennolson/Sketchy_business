@@ -1,7 +1,9 @@
 const { AuthenticationError } = require("apollo-server-express");
 const { User, Product, Category, Order } = require("../models");
 const { signToken } = require("../utils/auth");
-const stripe = require("stripe")("sk_test_51NJ39AAqsze0h4jRE4PNjOCVMFkIT5aRM5G4o7IvgIYZhx2p5gAPg6CYoWFHUwJvGOiyDM2aCJfFyhdb9h3yfYf700Nay2zqJv");
+const stripe = require("stripe")(
+  "sk_test_51NJ39AAqsze0h4jRE4PNjOCVMFkIT5aRM5G4o7IvgIYZhx2p5gAPg6CYoWFHUwJvGOiyDM2aCJfFyhdb9h3yfYf700Nay2zqJv"
+);
 
 const resolvers = {
   Query: {
@@ -58,12 +60,14 @@ const resolvers = {
       const line_items = [];
 
       const { products } = await order.populate("products");
-
+console.log(products)
       for (let i = 0; i < products.length; i++) {
         const product = await stripe.products.create({
           name: products[i].name,
           description: products[i].description,
-          images: [`${url}${products[i].image}`],
+          images: [`https://dry-mesa-58962.herokuapp.com${products[i].image}`],
+
+          //         images: [`${url}/images/${products[i].image}`],
         });
 
         const price = await stripe.prices.create({
@@ -146,7 +150,6 @@ const resolvers = {
       return { token, user };
     },
     addProduct: async (parent, args) => {
-
       const product = await Product.create(args);
 
       return { product };
