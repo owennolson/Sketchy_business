@@ -11,13 +11,13 @@ import '../index.css'
 function SellArt() {
   const [userProducts, setUserProducts] = useState([]);
   const [formState, setFormState] = useState({
-    name: '',
-    image: '',
-    artist: '',
-    price: '',
-    quantity: '',
-    description: '',
-    category: ''
+    name: "",
+    image: "",
+    artist: "",
+    price: "",
+    quantity: "",
+    description: "",
+    category: "",
   });
   const [addProduct] = useMutation(ADD_PRODUCT);
   const [deleteProduct] = useMutation(DELETE_PRODUCT);
@@ -75,13 +75,13 @@ const handleFormSubmit = async (event) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    if (name === 'category') {
+    if (name === "category") {
       const selectedCategory = categories.find(
         (category) => category._id === value
       );
       setFormState((prevState) => ({
         ...prevState,
-        category: selectedCategory ? selectedCategory._id : '',
+        category: selectedCategory ? selectedCategory._id : "",
       }));
     } else {
       setFormState((prevState) => ({
@@ -180,7 +180,12 @@ const handleFormSubmit = async (event) => {
             </div>
             <div>
               <label for="category">Select Category</label>
-              <select id="category" name="category" onChange={handleChange} value={formState.category}>
+              <select
+                id="category"
+                name="category"
+                onChange={handleChange}
+                value={formState.category}
+              >
                 <option value="">Select Category</option>
                 {categories.map((category) => (
                   <option key={category._id} value={category._id}>
