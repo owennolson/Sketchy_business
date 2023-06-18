@@ -24,9 +24,10 @@ function SellArt() {
 const { data: userData, loading: userLoading } = useQuery(QUERY_USER);
 const { loading: productsLoading, data: userProductsData } = useQuery(QUERY_ALL_PRODUCTS);
 
+let userProducts = [];
 if (!userLoading && !productsLoading) {
-  const userProducts = userProductsData.products.filter(
-    (product) => product.user?._id === userData.user._id
+  userProducts = userProductsData.products.filter(
+    (product) => product?.user?._id === userData?.user._id
   );
   console.log(userProducts);
 }
@@ -156,6 +157,21 @@ if (!userLoading && !productsLoading) {
             <button type="submit">Submit</button>
           </div>
         </form>
+      </div>
+      <div>
+        <h3>Your Listed Artwork:</h3>
+        {userProducts.map((product) => (
+                  <div class="row mb-2">
+                  <div class="col-md-8">
+                    <h4>{product.name}</h4>
+                  </div>
+                  <div class="col-md-4">
+                    <button id="delete" class="btn btn-sm btn-danger" data-id={product._id}>REMOVE LISTING</button>
+                  </div>
+                </div>
+
+        ))}
+
       </div>
     </>
   );
