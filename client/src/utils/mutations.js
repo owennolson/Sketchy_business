@@ -72,6 +72,19 @@ export const ADD_PRODUCT = gql`
       category: $category
     ) {
       _id
+      name
+      artist
+      description
+      image
+      quantity
+      price
+      user {
+        _id
+      }
+      category {
+        _id
+        name
+      }
     }
   }
 `;

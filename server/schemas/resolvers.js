@@ -149,7 +149,7 @@ const resolvers = {
 
       const product = await Product.create(args);
 
-      return { product };
+      return product;
     },
     deleteProduct: async (parent, args) => {
       const product = await Product.findByIdAndDelete({_id: args.productId});
