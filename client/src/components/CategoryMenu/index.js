@@ -13,10 +13,13 @@ function CategoryMenu() {
 
   const { categories } = state;
 
-  const { loading, data: categoryData } = useQuery(QUERY_CATEGORIES);
+  const { loading, data: categoryData } = useQuery(QUERY_CATEGORIES, {
+    fetchPolicy: 'network-only',
+  });
 
   useEffect(() => {
     if (categoryData) {
+      console.log('categoryData', categoryData);
       dispatch({
         type: UPDATE_CATEGORIES,
         categories: categoryData.categories,

@@ -247,3 +247,14 @@ select {
     width: 100%;
   }
 }
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+
+.form-container button[type="submit"] {
+  margin-top: 10px;
+  background-color: gray;
+}

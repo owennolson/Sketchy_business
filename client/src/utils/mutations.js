@@ -58,6 +58,7 @@ export const ADD_PRODUCT = gql`
     $image: String
     $quantity: Int
     $price: Float!
+    $user: ID
     $category: ID!
   ) {
     addProduct(
@@ -67,8 +68,30 @@ export const ADD_PRODUCT = gql`
       image: $image
       quantity: $quantity
       price: $price
+      user: $user
       category: $category
     ) {
+      _id
+      name
+      artist
+      description
+      image
+      quantity
+      price
+      user {
+        _id
+      }
+      category {
+        _id
+        name
+      }
+    }
+  }
+`;
+
+export const DELETE_PRODUCT = gql`
+  mutation deleteProduct($productId: ID!) {
+    deleteProduct(productId: $productId) {
       _id
     }
   }

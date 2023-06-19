@@ -1,9 +1,16 @@
-import React, { useState } from "react";
-import { useStoreContext } from "../utils/GlobalState";
-import { useMutation } from "@apollo/client";
-import { ADD_PRODUCT } from "../utils/mutations";
+import React, { useState, useEffect } from "react";
+import { useStoreContext } from '../utils/GlobalState';
+import { useMutation, useQuery } from '@apollo/client';
+import { ADD_PRODUCT, DELETE_PRODUCT } from '../utils/mutations';
+import { QUERY_USER } from '../utils/queries';
+import { QUERY_ALL_PRODUCTS } from '../utils/queries';
+import '../index.css'
+import { idbPromise } from '../utils/helpers';
+import { UPDATE_PRODUCTS, ADD_PRODUCT as ADD_PRODUCT_ACTION } from "../utils/actions";
+
 
 function SellArt() {
+  // const [userProducts, setUserProducts] = useState([]);
   const [formState, setFormState] = useState({
     name: "",
     image: "",
@@ -14,146 +21,204 @@ function SellArt() {
     category: "",
   });
   const [addProduct] = useMutation(ADD_PRODUCT);
+  const [deleteProduct] = useMutation(DELETE_PRODUCT);
   const [state, dispatch] = useStoreContext();
 
-  const { categories } = state;
+  const { categories, products } = state;
 
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
-    console.log("formState", formState);
-    await addProduct({
-      variables: {
-        name: formState.name,
-        image: formState.image,
-        artist: formState.artist,
-        price: parseFloat(formState.price),
-        quantity: parseInt(formState.quantity),
-        description: formState.description,
-        category: formState.category,
-      },
+
+const { data: userData, loading: userLoading } = useQuery(QUERY_USER);
+// const { loading: productsLoading, data: userProductsData } = useQuery(QUERY_ALL_PRODUCTS);
+
+
+// useEffect(() => {
+//   if (!userLoading && !productsLoading && userProductsData) {
+//     const filteredUserProducts = userProductsData.products.filter(
+//       (product) => product?.user?._id === userData?.user._id
+//     );
+//     setUserProducts(filteredUserProducts);
+//   }
+// }, [userLoading, productsLoading, userProductsData, userData]);
+
+const { loading, data, refetch } = useQuery(QUERY_ALL_PRODUCTS);
+
+useEffect(() => {
+  refetch();
+}, [refetch]);
+
+useEffect(() => {
+  if (data) {
+    dispatch({
+      type: UPDATE_PRODUCTS,
+      products: data.products,
     });
-
-    // Clear the form after submitting
-    setFormState({
-      name: "",
-      image: "",
-      artist: "",
-      price: "",
-      quantity: "",
-      description: "",
-      category: "",
+    data.products.forEach((product) => {
+      idbPromise('products', 'put', product);
     });
+  } else if (!loading) {
+    idbPromise('products', 'get').then((products) => {
+      dispatch({
+        type: UPDATE_PRODUCTS,
+        products: products,
+      });
+    });
+  }
+}, [data, loading, dispatch]);
 
-    setTimeout(() => {
-      window.location.assign("/");
-    }, 10);
-  };
+function filterProducts() {
+  if (!userData) {
+    return [];
+  }
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    if (name === "category") {
-      const selectedCategory = categories.find(
-        (category) => category._id === value
-      );
-      setFormState((prevState) => ({
-        ...prevState,
-        category: selectedCategory ? selectedCategory._id : "",
-      }));
-    } else {
-      setFormState((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
+  return state.products.filter(
+    (product) => product?.user?._id === userData?.user._id
+  );
+}
+
+
+const handleFormSubmit = async (event) => {
+  event.preventDefault();
+
+  const {data} =await addProduct({
+    variables: {
+      name: formState.name,
+      image: formState.image,
+      artist: formState.artist,
+      price: parseFloat(formState.price),
+      quantity: parseInt(formState.quantity),
+      description: formState.description,
+      category: formState.category,
+      user: userData.user._id
+    },
+  });
+
+  const addedProduct = data?.addProduct;
+
+  if (addedProduct) {
+    // setUserProducts((prevProducts) => [...prevProducts, addedProduct]);
+    dispatch({
+      type: ADD_PRODUCT_ACTION,
+      product: addedProduct,
+    });
+    idbPromise('products', 'put', addedProduct);
+  }
+
+  setFormState({
+    name: '',
+    image: '',
+    artist: '',
+    price: '',
+    quantity: '',
+    description: '',
+    category: ''
+  });
+};
+
+const handleChange = (event) => {
+  const { name, value } = event.target;
+
+  if (name === "category") {
+    console.log('name', name);
+    console.log('value', value);
+    const selectedCategory = categories.find(
+      (category) => category._id === value
+    );
+    console.log('selected cat', selectedCategory)
+    setFormState((prevState) => ({
+      ...prevState,
+      category: selectedCategory ? selectedCategory._id : "", 
+    }));
+  } else {
+    setFormState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  }
+};
+
+  const handleDelete = async (productId) => {
+    try {
+      await deleteProduct({
+        variables: { productId },
+        update: (cache) => {
+          cache.modify({
+            fields: {
+              userProducts(existingProducts = [], { readField }) {
+                const updatedProducts = existingProducts.filter(
+                  (productRef) => productId !== readField('_id', productRef)
+                );
+                return updatedProducts;
+              },
+            },
+          });
+        },
+      });
+      // setUserProducts((prevProducts) =>
+      //   prevProducts.filter((product) => product._id !== productId)
+      // );
+      const updatedProducts = state.products.filter((product) => product._id !== productId);
+      dispatch({
+        type: UPDATE_PRODUCTS,
+        products: updatedProducts,
+      });
+      idbPromise('products', 'delete', {_id: productId});
+    } catch (error) {
+      console.log('Error deleting product:', error);
     }
-  };
+  }
 
   return (
     <>
-      <div>
+      <div className="mx-2 form-container">
         <h3>What would you like to sell?</h3>
         <form onSubmit={handleFormSubmit}>
-          <div class="form-group">
-            <label for="name" class="h4">
+          <div className="my-1">
+            <label for="name">
               Title of Artwork:
             </label>
-            <input
-              class="rounded"
-              type="text"
-              name="name"
-              id="name"
-              onChange={handleChange}
-              value={formState.name}
-            />
+            <input type="text" name="name" id="name" onChange={handleChange} value={formState.name} />
           </div>
 
-          <div class="form-group">
-            <label for="image" class="h4">
+          <div className="my-1">
+            <label for="image" >
               Image URL:
             </label>
-            <input
-              class="rounded"
-              type="text"
-              name="image"
-              id="image"
-              onChange={handleChange}
-              value={formState.image}
-            />
+            <input type="text" name="image" id="image" onChange={handleChange} value={formState.image} />
           </div>
 
-          <div class="form-group">
-            <label for="artist" class="h4">
+          <div className="my-1">
+            <label for="artist">
               Artist's Name:
             </label>
-            <input
-              class="rounded"
-              type="text"
-              name="artist"
-              id="artist"
-              onChange={handleChange}
-              value={formState.artist}
-            />
+            <input type="text" name="artist" id="artist" onChange={handleChange} value={formState.artist} />
           </div>
 
-          <div class="form-group">
-            <label for="price" class="h4">
+          <div className="my-1">
+            <label for="price" >
               Price:
             </label>
-            <input
-              class="rounded"
-              type="text"
-              name="price"
-              id="price"
-              onChange={handleChange}
-              value={formState.price}
-            />
+            <input type="text" name="price" id="price" onChange={handleChange} value={formState.price} />
           </div>
 
-          <div class="form-group">
-            <label for="quantity" class="h4">
+          <div className="my-1">
+            <label for="quantity">
               Quantity:
             </label>
-            <input
-              class="rounded"
-              type="text"
-              name="quantity"
-              id="quantity"
-              onChange={handleChange}
-              value={formState.quantity}
-            />
+            <input type="text" name="quantity" id="quantity" onChange={handleChange} value={formState.quantity} />
           </div>
 
-          <div class="form-group">
-            <div class="row">
-              <div class="col-md-12">
-                <label for="description" class="h4">
+          <div className="my-1">
+            <div>
+              <div>
+                <label for="description">
                   Description:
                 </label>
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-12">
+            <div>
+              <div>
                 <textarea
-                  class="form-control rounded"
+          
                   type="text"
                   id="description"
                   name="description"
@@ -181,10 +246,25 @@ function SellArt() {
               </select>
             </div>
           </div>
-          <div class="flex-row flex-end">
+          <div className="form-container">
             <button type="submit">Submit</button>
           </div>
         </form>
+      </div>
+      <div className="mx-2">
+        <h3>Your Listed Artwork:</h3>
+        {filterProducts().map((product) => (
+                  <div className="row mb-2">
+                  <div className="col-md-8">
+                    <h4>{product.name}</h4>
+                  </div>
+                  <div>
+                    <button id="delete" onClick={() => handleDelete(product._id)} data-id={product._id}>REMOVE LISTING</button>
+                  </div>
+                </div>
+
+        ))}
+
       </div>
     </>
   );

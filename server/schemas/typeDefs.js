@@ -14,6 +14,7 @@ const typeDefs = gql`
     image: String
     quantity: Int
     price: Float
+    user: User
     category: Category
   }
 
@@ -72,8 +73,10 @@ const typeDefs = gql`
       image: String
       quantity: Int
       price: Float!
+      user: ID
       category: ID!
     ): Product
+    deleteProduct(productId: ID!): Product
   }
 `;
 
