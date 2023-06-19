@@ -5,11 +5,12 @@ import { ADD_PRODUCT, DELETE_PRODUCT } from '../utils/mutations';
 import { QUERY_USER } from '../utils/queries';
 import { QUERY_ALL_PRODUCTS } from '../utils/queries';
 import '../index.css'
-
+import { idbPromise } from '../utils/helpers';
+import { UPDATE_PRODUCTS, ADD_PRODUCT as ADD_PRODUCT_ACTION } from "../utils/actions";
 
 
 function SellArt() {
-  const [userProducts, setUserProducts] = useState([]);
+  // const [userProducts, setUserProducts] = useState([]);
   const [formState, setFormState] = useState({
     name: "",
     image: "",
@@ -23,21 +24,56 @@ function SellArt() {
   const [deleteProduct] = useMutation(DELETE_PRODUCT);
   const [state, dispatch] = useStoreContext();
 
-  const { categories } = state;
+  const { categories, products } = state;
 
 
 const { data: userData, loading: userLoading } = useQuery(QUERY_USER);
-const { loading: productsLoading, data: userProductsData } = useQuery(QUERY_ALL_PRODUCTS);
+// const { loading: productsLoading, data: userProductsData } = useQuery(QUERY_ALL_PRODUCTS);
 
+
+// useEffect(() => {
+//   if (!userLoading && !productsLoading && userProductsData) {
+//     const filteredUserProducts = userProductsData.products.filter(
+//       (product) => product?.user?._id === userData?.user._id
+//     );
+//     setUserProducts(filteredUserProducts);
+//   }
+// }, [userLoading, productsLoading, userProductsData, userData]);
+
+const { loading, data, refetch } = useQuery(QUERY_ALL_PRODUCTS);
 
 useEffect(() => {
-  if (!userLoading && !productsLoading && userProductsData) {
-    const filteredUserProducts = userProductsData.products.filter(
-      (product) => product?.user?._id === userData?.user._id
-    );
-    setUserProducts(filteredUserProducts);
+  refetch();
+}, [refetch]);
+
+useEffect(() => {
+  if (data) {
+    dispatch({
+      type: UPDATE_PRODUCTS,
+      products: data.products,
+    });
+    data.products.forEach((product) => {
+      idbPromise('products', 'put', product);
+    });
+  } else if (!loading) {
+    idbPromise('products', 'get').then((products) => {
+      dispatch({
+        type: UPDATE_PRODUCTS,
+        products: products,
+      });
+    });
   }
-}, [userLoading, productsLoading, userProductsData, userData]);
+}, [data, loading, dispatch]);
+
+function filterProducts() {
+  if (!userData) {
+    return [];
+  }
+
+  return state.products.filter(
+    (product) => product?.user?._id === userData?.user._id
+  );
+}
 
 
 const handleFormSubmit = async (event) => {
@@ -59,7 +95,12 @@ const handleFormSubmit = async (event) => {
   const addedProduct = data?.addProduct;
 
   if (addedProduct) {
-    setUserProducts((prevProducts) => [...prevProducts, addedProduct]);
+    // setUserProducts((prevProducts) => [...prevProducts, addedProduct]);
+    dispatch({
+      type: ADD_PRODUCT_ACTION,
+      product: addedProduct,
+    });
+    idbPromise('products', 'put', addedProduct);
   }
 
   setFormState({
@@ -73,23 +114,27 @@ const handleFormSubmit = async (event) => {
   });
 };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    if (name === "category") {
-      const selectedCategory = categories.find(
-        (category) => category._id === value
-      );
-      setFormState((prevState) => ({
-        ...prevState,
-        category: selectedCategory ? selectedCategory._id : "",
-      }));
-    } else {
-      setFormState((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
-    }
-  };
+const handleChange = (event) => {
+  const { name, value } = event.target;
+
+  if (name === "category") {
+    console.log('name', name);
+    console.log('value', value);
+    const selectedCategory = categories.find(
+      (category) => category._id === value
+    );
+    console.log('selected cat', selectedCategory)
+    setFormState((prevState) => ({
+      ...prevState,
+      category: selectedCategory ? selectedCategory._id : "", 
+    }));
+  } else {
+    setFormState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  }
+};
 
   const handleDelete = async (productId) => {
     try {
@@ -108,9 +153,15 @@ const handleFormSubmit = async (event) => {
           });
         },
       });
-      setUserProducts((prevProducts) =>
-        prevProducts.filter((product) => product._id !== productId)
-      );
+      // setUserProducts((prevProducts) =>
+      //   prevProducts.filter((product) => product._id !== productId)
+      // );
+      const updatedProducts = state.products.filter((product) => product._id !== productId);
+      dispatch({
+        type: UPDATE_PRODUCTS,
+        products: updatedProducts,
+      });
+      idbPromise('products', 'delete', {_id: productId});
     } catch (error) {
       console.log('Error deleting product:', error);
     }
@@ -202,7 +253,7 @@ const handleFormSubmit = async (event) => {
       </div>
       <div className="mx-2">
         <h3>Your Listed Artwork:</h3>
-        {userProducts.map((product) => (
+        {filterProducts().map((product) => (
                   <div className="row mb-2">
                   <div className="col-md-8">
                     <h4>{product.name}</h4>
