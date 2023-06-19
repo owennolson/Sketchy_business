@@ -78,6 +78,8 @@ function Detail() {
     });
 
     idbPromise("cart", "delete", { ...currentProduct });
+
+
   };
 
   return (
@@ -101,7 +103,7 @@ function Detail() {
             </button>
           </p>
 
-          <img src={`/${currentProduct.image}`} alt={currentProduct.name} />
+          <img src={`${currentProduct.image}`} alt={currentProduct.name} />
         </div>
       ) : null}
       <Cart />
