@@ -47,7 +47,3 @@ A special thanks to the following individuals for their contributions to the pro
 
 ## Contact Information
 For more information, feel free to get in touch via github.
-
----
-
-Please replace the placeholder texts like *(add link here)* with the actual data. Also, feel free to modify the document as per your requirements.
