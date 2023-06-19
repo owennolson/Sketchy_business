@@ -158,7 +158,7 @@ function SellArt() {
                   id="description"
                   name="description"
                   rows="3"
-                  cols="60"
+                  cols="50"
                   onChange={handleChange}
                   value={formState.description}
                 ></textarea>
