@@ -21,24 +21,26 @@ body {
 body {
   margin: 0;
   padding: 0;
-font-family: 'Roboto Mono', monospace;
-  font-weight: 400;
+  font-family: 'Tangerine';
+  font-weight: 700;
   line-height: 1.5;
   font-size: 16px;
-  color: var(--light);
-
+  color: #e9e4e4;
+  font-style: bold;
 background: rgb(0,0,0);
-background: linear-gradient(335deg, rgba(0,0,0,1) 0%, rgba(8,36,61,1) 61%);
+background: linear-gradient(335deg, rgb(65, 63, 61) 0%, rgb(165, 163, 160) 80%);
 }
-
+ul {
+  list-style: none;
+}
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-font-family: 'Roboto Mono', monospace;
-  font-weight: 500;
+font-family: 'Tangerine';
+  font-weight: 750;
   margin: 5px 0;
   line-height: 1.25;
 }
@@ -73,7 +75,7 @@ p {
 }
 
 a {
-  color: var(--tertiary);
+  color:#e6e6e6;
   text-decoration: none;
   font-weight: bold;
 }
@@ -94,13 +96,16 @@ button {
   font-size: 1rem;
   text-decoration: none;
   padding: 0.25rem 1rem;
-  border-radius: 2rem;
+  border-radius: .3rem;
   border: none;
   outline: none;
   cursor: pointer;
-  margin: 0 1px;
+  margin: 1rem;
   color: var(--light);
   background-color: var(--primary);
+  background-color: #612603;
+  box-shadow: .1rem .2rem .5rem 0 rgb(26, 25, 25);
+  
 }
 
 button:hover {
@@ -114,6 +119,10 @@ button[disabled] {
 
 img {
   max-width: 100%;
+  border: 1rem;
+  border-style: inset;
+  border-color: #752f06;
+  box-shadow: .3rem .5rem 1rem 0 rgb(26, 25, 25);
 }
 
 span[role="img"] {
@@ -122,20 +131,46 @@ span[role="img"] {
 
 form {
   width: 40%;
+  border: 1rem #752f06 inset;
+  /* border-radius: 1rem; */
+  height: 22rem;
+  background-color: #fffef0;
+  margin: 1rem;
+  box-shadow: .3rem .5rem 1rem 0 rgb(26, 25, 25);
 }
-
+label {
+  color:#752f06;
+  margin: .5rem;
+}
 input {
+  color:#752f06;
   font-size: 1rem;
   padding: 0.25rem;
   border: 1px solid var(--dark);
   outline: none;
   border-radius: 3px;
+  border-color: #752f06;
   transition: box-shadow 0.2s;
+  background-color: #f3f9ff;
+  margin: .2rem;
 }
 
 input:focus {
   border: 1px solid var(--secondary);
   box-shadow: 0 0 .25rem rgba(0, 0, 0, .5);
+}
+
+textarea {
+  margin: .2rem;
+  margin-left: 1.7rem;
+  border-radius: .3rem;
+  border-color: #752f06;
+  color: #752f06;
+}
+
+select {
+  color: #752f06;  
+  border-color: #752f06;
 }
 
 .container {
