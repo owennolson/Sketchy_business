@@ -251,8 +251,8 @@ const handleChange = (event) => {
           </div>
         </form>
       </div>
-      <div className="mx-2">
-        <h3>Your Listed Artwork:</h3>
+      <div className="mx-2 my-2 form-container spacing">
+        <h3 className="">Your Listed Artwork:</h3>
         {filterProducts().map((product) => (
                   <div className="row mb-2">
                   <div className="col-md-8">
